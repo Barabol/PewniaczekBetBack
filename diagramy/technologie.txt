@@ -1,0 +1,4 @@
+fast-api
+postgresql
+bcrypt
+kafka
