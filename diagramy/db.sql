@@ -19,16 +19,6 @@ CREATE TABLE account_types(
 	name VARCHAR(30)
 );
 
--- <> WARTOŚCI ACOUNT TYPES <> --
-
-INSERT INTO account_types(id,name) VALUES 
-(0,'user'),
-(1,'worker'),
-(2,'admin')
-ON CONFLICT (id) DO NOTHING;
-
--- <> WARTOŚCI ACOUNT TYPES <> --
-
 CREATE TABLE users(
 	id SERIAL PRIMARY KEY,
 	name VARCHAR(40),
@@ -85,7 +75,6 @@ CREATE TABLE score_bets(
 CREATE TABLE predictions(
 	id SERIAL PRIMARY KEY,
 	name VARCHAR(80),
-	curent_multiplyer FLOAT,
 	start_date TIMESTAMP,
 	stop_date TIMESTAMP,
 	true_bets INTEGER,
@@ -140,3 +129,70 @@ CREATE TABLE followers(
 	followed_id Integer REFERENCES users(id),
 	PRIMARY KEY (follower_id, followed_id)
 );
+
+-- <> WARTOŚCI ACOUNT TYPES <> --
+
+INSERT INTO account_types(id,name) VALUES 
+(0,'user'),
+(1,'worker'),
+(2,'admin')
+ON CONFLICT (id) DO NOTHING;
+
+-- <> WARTOŚCI ACOUNT TYPES <> --
+
+
+-- <> WARTOŚCI SPORTS<> --
+
+INSERT INTO sports(id,name) VALUES 
+(1,'piłka nożna'),
+(2,'koszykówka'),
+(3,'siatkówka'),
+(4,'piłka ręczna'),
+(5,'tenis'),
+(6,'ping-pong')
+ON CONFLICT (id) DO NOTHING;
+
+-- <> WARTOŚCI SPORTS<> --
+
+
+-- <> WARTOŚCI TEAMS <> --
+
+INSERT INTO teams(id,name) VALUES 
+(1,'fc-barcelona'),
+(2,'real madryt'),
+(3,'korona kielce'),
+(4,'klub 2ring'),
+(5,'psg')
+ON CONFLICT (id) DO NOTHING;
+
+-- <> WARTOŚCI TEAMS <> --
+
+
+-- <> WARTOŚCI GAMES <> --
+
+INSERT INTO games(id,name,team1_id,team2_id,sport_id,team1_score,team2_score,start_date) VALUES 
+(1,'fc-barcelona vs real madryt 2026',1,2,6,null,null,'2026-04-25 15:15:30'),
+(2,'fc-barcelona vs 2Ring 2026',1,4,3,2,15,'2026-04-15 15:15:30')
+ON CONFLICT (id) DO NOTHING;
+
+-- <> WARTOŚCI GAMES <> --
+
+
+-- <> WARTOŚCI WIN_BETS <> --
+
+INSERT INTO win_bets(id,name,curent_multiplyer,stop_date,game_id) VALUES 
+(1,'ultimate ping-pong turnament',2.5,'2027-04-25 15:15:30',1),
+(2,'2Ring vs fc-barcelona EZ win',1,'2026-04-16 15:15:30',2)
+ON CONFLICT (id) DO NOTHING;
+
+-- <> WARTOŚCI WIN_BETS <> --
+
+
+-- <> WARTOŚCI PREDICTIONS <> --
+
+INSERT INTO predictions (id,name,start_date,stop_date,true_bets,false_bets,pot,ended_with) VALUES 
+(1,'czy trump podbije iran?','2026-04-16 15:15:30', '2027-04-16 15:15:30',0,0,0,null),
+(2,'czy trump podbije grenlandie?','2026-01-16 15:15:30', '2025-03-16 15:15:30',0,0,0,true)
+ON CONFLICT (id) DO NOTHING;
+
+-- <> WARTOŚCI PREDICTIONS <> --
