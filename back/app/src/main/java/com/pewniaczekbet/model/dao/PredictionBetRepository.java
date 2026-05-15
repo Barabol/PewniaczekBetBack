@@ -1,0 +1,15 @@
+package com.pewniaczekbet.model.dao;
+
+import java.time.LocalDateTime;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.pewniaczekbet.model.entities.PredictionBetEntity;
+
+public interface PredictionBetRepository extends JpaRepository<PredictionBetEntity, Long> {
+	Page<PredictionBetEntity> findAll(Pageable pageable);
+
+	Page<PredictionBetEntity> findByStopDateAfter(LocalDateTime date, Pageable pageable);
+}

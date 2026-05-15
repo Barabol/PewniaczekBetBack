@@ -1,4 +1,0 @@
-fastapi[standard]
-psycopg2
-bcrypt
-itsdangerous
