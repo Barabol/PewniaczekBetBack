@@ -3,8 +3,6 @@ package com.pewniaczekbet.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.pewniaczekbet.model.dao.SportRepository;
-import com.pewniaczekbet.model.dao.TeamRepository;
 import com.pewniaczekbet.model.entities.WinBetEntity;
 
 import lombok.Data;

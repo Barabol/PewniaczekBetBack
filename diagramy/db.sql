@@ -153,6 +153,22 @@ CREATE TABLE followers(
 	PRIMARY KEY (follower_id, followed_id)
 );
 
+CREATE TABLE oath_services(
+	id SERIAL PRIMARY KEY,
+	name varchar(64) UNIQUE
+);
+
+CREATE TABLE oath(
+	id SERIAL PRIMARY KEY,
+	user_id Integer REFERENCES users(id),
+	token varchar(512) UNIQUE,
+	service_id Integer REFERENCES oath_services(id),
+	login varchar(128),
+	url varchar(256),
+	avatar_url varchar(256),
+	email varchar(256)
+);
+
 -- <> WARTOŚCI ACOUNT TYPES <> --
 
 INSERT INTO account_types(id,name) VALUES 
@@ -163,6 +179,13 @@ ON CONFLICT (id) DO NOTHING;
 
 -- <> WARTOŚCI ACOUNT TYPES <> --
 
+-- <> WARTOŚCI OATH SERVICES <> --
+
+INSERT INTO oath_services(id,name) VALUES 
+(0,'github')
+ON CONFLICT (id) DO NOTHING;
+
+-- <> WARTOŚCI OATH SERVICES <> --
 
 -- <> WARTOŚCI SPORTS<> --
 

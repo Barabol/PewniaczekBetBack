@@ -1,7 +1,5 @@
 package com.pewniaczekbet.rest;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;

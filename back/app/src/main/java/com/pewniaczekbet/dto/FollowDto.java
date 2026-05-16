@@ -1,7 +1,6 @@
 package com.pewniaczekbet.dto;
 
 import com.pewniaczekbet.model.entities.FollowEntity;
-import com.pewniaczekbet.model.entities.UserEntity;
 
 /**
  * FollowDto

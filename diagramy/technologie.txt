@@ -1,4 +1,4 @@
-fast-api
 postgresql
+spring
 bcrypt
 kafka

@@ -1,14 +1,7 @@
 package com.pewniaczekbet.dto;
 
 import java.time.LocalDateTime;
-
-import com.pewniaczekbet.model.dao.SportRepository;
-import com.pewniaczekbet.model.dao.TeamRepository;
 import com.pewniaczekbet.model.entities.GameEntity;
-import com.pewniaczekbet.model.entities.SportEntity;
-import com.pewniaczekbet.model.entities.TeamEntity;
-
-import jakarta.transaction.Transactional;
 
 /**
  * GameDto

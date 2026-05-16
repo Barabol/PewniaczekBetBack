@@ -1,7 +1,5 @@
 package com.pewniaczekbet.dto;
 
-import org.mindrot.jbcrypt.BCrypt;
-
 import com.pewniaczekbet.model.entities.UserEntity;
 
 /**

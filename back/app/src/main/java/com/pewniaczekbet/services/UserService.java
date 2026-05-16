@@ -12,6 +12,7 @@ import com.pewniaczekbet.model.dao.UserRepository;
 import com.pewniaczekbet.model.entities.FollowEntity;
 import com.pewniaczekbet.model.entities.UserEntity;
 import com.pewniaczekbet.model.exceptions.BadRequestException;
+import com.pewniaczekbet.other.ApplicationLimitations;
 import com.pewniaczekbet.other.FollowId;
 import com.pewniaczekbet.other.PagePropertiesValidator;
 
@@ -53,7 +54,7 @@ public class UserService {
 		entity.setWinsAmount(0L);
 		entity.setLossesAmount(0L);
 		entity.setBalance(0L);
-		entity.setFreeBetBalance(1000L);
+		entity.setFreeBetBalance(ApplicationLimitations.NewAccountFreeBet);
 		entity.setPublic(true);
 		entity.setAccountTypeId(0L);
 
