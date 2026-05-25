@@ -11,4 +11,7 @@ public abstract class ApplicationLimitations {
 	public static final int MinBetAmount = 100;
 
 	public static final Long NewAccountFreeBet= 1000L;
+
+	public static final int MinPayment = 500;
+	public static final int MaxPayment = 100000;
 }

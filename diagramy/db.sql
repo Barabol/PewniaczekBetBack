@@ -169,6 +169,32 @@ CREATE TABLE oath(
 	email varchar(256)
 );
 
+CREATE TABLE payment_status(
+	id SERIAL PRIMARY KEY,
+	name varchar(64) UNIQUE
+);
+
+CREATE TABLE payments(
+	id SERIAL PRIMARY KEY,
+	sid varchar(512) UNIQUE,
+	user_id Integer REFERENCES users(id),
+	amount Integer,
+	description varchar(1024),
+	payment_date TIMESTAMP,
+	status_id Integer REFERENCES payment_status(id)
+);
+
+-- <> WARTOŚCI PAYMENT STATUS <> --
+
+INSERT INTO payment_status(id,name) VALUES 
+(0,'unpaid'),
+(1,'paid'),
+(2,'no_payment_required')
+(3,'cancled')
+ON CONFLICT (id) DO NOTHING;
+
+-- <> WARTOŚCI PAYMENT STATUS <> --
+
 -- <> WARTOŚCI ACOUNT TYPES <> --
 
 INSERT INTO account_types(id,name) VALUES 

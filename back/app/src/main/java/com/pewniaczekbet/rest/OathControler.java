@@ -46,7 +46,7 @@ public class OathControler {
 		return ResponseEntity.ok("OK");
 	}
 
-	@GetMapping
+	@GetMapping("all")
 	public ResponseEntity<List<OathDto>> getOath(@RequestParam(required = true) Long userId) {
 		return ResponseEntity.ok().body(oathServie.getOath(userId));
 	}

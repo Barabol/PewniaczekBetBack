@@ -64,6 +64,16 @@
 			<attribute name="gradle_used_by_scope" value="main,test"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry sourcepath="/Users/user/.gradle/caches/modules-2/files-2.1/me.paulschwarz/spring-dotenv/4.0.0/831ef2c9ba7976d7bc835a6c68225a0c4d89b8b7/spring-dotenv-4.0.0-sources.jar" kind="lib" path="/Users/user/.gradle/caches/modules-2/files-2.1/me.paulschwarz/spring-dotenv/4.0.0/e0180f80e685a9506d1942e6836a16dee050ebaf/spring-dotenv-4.0.0.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="/Users/user/.gradle/caches/modules-2/files-2.1/com.stripe/stripe-java/32.1.0/f94f37d475984bf7032f0ce4b2420bdff26c93ec/stripe-java-32.1.0-sources.jar" kind="lib" path="/Users/user/.gradle/caches/modules-2/files-2.1/com.stripe/stripe-java/32.1.0/839fb6ef75c6a61c6cb14d96e444368108ed82f/stripe-java-32.1.0.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry sourcepath="/Users/user/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter-json/3.5.0/67be056161202c4b12942a326f649c5dcb7c3525/spring-boot-starter-json-3.5.0-sources.jar" kind="lib" path="/Users/user/.gradle/caches/modules-2/files-2.1/org.springframework.boot/spring-boot-starter-json/3.5.0/af98a526ea3f68c179a6c6199bb1dbe864f43b93/spring-boot-starter-json-3.5.0.jar">
 		<attributes>
 			<attribute name="gradle_used_by_scope" value="main,test"/>
@@ -369,6 +379,16 @@
 			<attribute name="gradle_used_by_scope" value="main,test"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry sourcepath="/Users/user/.gradle/caches/modules-2/files-2.1/io.github.cdimascio/dotenv-java/3.0.0/9b93ecdadc8df367f41a8e011f50757611c43a4d/dotenv-java-3.0.0-sources.jar" kind="lib" path="/Users/user/.gradle/caches/modules-2/files-2.1/io.github.cdimascio/dotenv-java/3.0.0/f535c5df8b98575eabb2820e548f5ba8a987fe69/dotenv-java-3.0.0.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="/Users/user/.gradle/caches/modules-2/files-2.1/com.google.code.gson/gson/2.13.1/291e19613797898e0b2ba95553c874c1d07e00c1/gson-2.13.1-sources.jar" kind="lib" path="/Users/user/.gradle/caches/modules-2/files-2.1/com.google.code.gson/gson/2.13.1/853ce06c11316b33a8eae5e9095da096a9528b8f/gson-2.13.1.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry sourcepath="/Users/user/.gradle/caches/modules-2/files-2.1/org.jboss.logging/jboss-logging/3.6.1.Final/47222642c3ede6f40f3e27594fe6a9bf180b6938/jboss-logging-3.6.1.Final-sources.jar" kind="lib" path="/Users/user/.gradle/caches/modules-2/files-2.1/org.jboss.logging/jboss-logging/3.6.1.Final/886afbb445b4016a37c8960a7aef6ebd769ce7e5/jboss-logging-3.6.1.Final.jar">
 		<attributes>
 			<attribute name="gradle_used_by_scope" value="main,test"/>
@@ -405,6 +425,11 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry sourcepath="/Users/user/.gradle/caches/modules-2/files-2.1/jakarta.inject/jakarta.inject-api/2.0.1/569d6c5f18d6ff83c82152d1870cf0faf830c594/jakarta.inject-api-2.0.1-sources.jar" kind="lib" path="/Users/user/.gradle/caches/modules-2/files-2.1/jakarta.inject/jakarta.inject-api/2.0.1/4c28afe1991a941d7702fe1362c365f0a8641d1e/jakarta.inject-api-2.0.1.jar">
+		<attributes>
+			<attribute name="gradle_used_by_scope" value="main,test"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry sourcepath="/Users/user/.gradle/caches/modules-2/files-2.1/com.google.errorprone/error_prone_annotations/2.38.0/89b24f7eb69d776239d46ae4979e3d61a0784a9/error_prone_annotations-2.38.0-sources.jar" kind="lib" path="/Users/user/.gradle/caches/modules-2/files-2.1/com.google.errorprone/error_prone_annotations/2.38.0/fc0ae991433e8590ba51cd558421478318a74c8c/error_prone_annotations-2.38.0.jar">
 		<attributes>
 			<attribute name="gradle_used_by_scope" value="main,test"/>
 		</attributes>
