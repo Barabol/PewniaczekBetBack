@@ -3,3 +3,8 @@ pytania.txt
 
 .DS_Store
 .env
+back/app/src/main/resources/application.properties
+.idea/vcs.xml
+.idea/workspace.xml
+back/app/src/main/resources/application.properties
+back/app/src/main/resources/application.properties

@@ -189,7 +189,7 @@ CREATE TABLE payments(
 INSERT INTO payment_status(id,name) VALUES 
 (0,'unpaid'),
 (1,'paid'),
-(2,'no_payment_required')
+(2,'no_payment_required'),
 (3,'cancled')
 ON CONFLICT (id) DO NOTHING;
 
