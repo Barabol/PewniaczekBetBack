@@ -15,6 +15,8 @@ public class PredictionBetDto {
 	private LocalDateTime stopDate;
 	private Long trueBets;
 	private Long falseBets;
+	private Long trueBetsAmount;
+	private Long falseBetsAmount;
 	private Long pot;
 	private Boolean endedWith;
 
@@ -29,6 +31,8 @@ public class PredictionBetDto {
 		dto.setFalseBets(entity.getFalseBets());
 		dto.setPot(entity.getPot());
 		dto.setEndedWith(entity.getEndedWith());
+		dto.setTrueBetsAmount(entity.getTrueBetsAmount());
+		dto.setFalseBetsAmount(entity.getFalseBetsAmount());
 		return dto;
 	}
 
@@ -40,9 +44,27 @@ public class PredictionBetDto {
 		entity.setStopDate(this.getStopDate());
 		entity.setTrueBets(this.getTrueBets());
 		entity.setFalseBets(this.getFalseBets());
+		entity.setTrueBetsAmount(entity.getTrueBetsAmount());
+		entity.setFalseBetsAmount(entity.getFalseBetsAmount());
 		entity.setPot(this.getPot());
 		entity.setEndedWith(this.getEndedWith());
 		return entity;
+	}
+
+	public Long getTrueBetsAmount() {
+		return trueBetsAmount;
+	}
+
+	public void setTrueBetsAmount(Long trueBetsAmount) {
+		this.trueBetsAmount = trueBetsAmount;
+	}
+
+	public Long getFalseBetsAmount() {
+		return falseBetsAmount;
+	}
+
+	public void setFalseBetsAmount(Long falseBetsAmount) {
+		this.falseBetsAmount = falseBetsAmount;
 	}
 
 	public Long getId() {

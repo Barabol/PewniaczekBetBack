@@ -3,6 +3,7 @@ package com.pewniaczekbet.services;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -12,8 +13,12 @@ import com.pewniaczekbet.dto.PredictionBetDto;
 import com.pewniaczekbet.dto.PredictionBetPlaceDto;
 import com.pewniaczekbet.dto.ScoreBetDto;
 import com.pewniaczekbet.dto.ScoreBetPlaceDto;
+import com.pewniaczekbet.dto.UserBetPredictionDto;
+import com.pewniaczekbet.dto.UserScoreBetDto;
+import com.pewniaczekbet.dto.UserWinBetDto;
 import com.pewniaczekbet.dto.WinBetDto;
 import com.pewniaczekbet.dto.WinBetPlaceDto;
+import com.pewniaczekbet.model.dao.FollowerRepository;
 import com.pewniaczekbet.model.dao.GameRepository;
 import com.pewniaczekbet.model.dao.PredictionBetRepository;
 import com.pewniaczekbet.model.dao.ScoreBetRepository;
@@ -24,6 +29,7 @@ import com.pewniaczekbet.model.dao.UserRepository;
 import com.pewniaczekbet.model.dao.UserScoreBetRepository;
 import com.pewniaczekbet.model.dao.UserWinBetRepository;
 import com.pewniaczekbet.model.dao.WinBetRepository;
+import com.pewniaczekbet.model.entities.FollowEntity;
 import com.pewniaczekbet.model.entities.GameEntity;
 import com.pewniaczekbet.model.entities.PredictionBetEntity;
 import com.pewniaczekbet.model.entities.ScoreBetEntity;
@@ -59,6 +65,18 @@ public class BetService {
 	private final UserRepository userRepository;
 	private final PredictionBetRepository predictionBetRepository;
 	private final UserPredictionBetRepository userPredictionBetRepository;
+	private final FollowerRepository followerRepository;
+
+	private boolean isPublic(Long userId, Long user) {
+		UserEntity usr = userRepository.findById(user)
+				.orElseThrow(() -> new BadRequestException("unable to find user with this id"));
+		if (usr.isPublic())
+			return true;
+		Optional<FollowEntity> follow = followerRepository.findByFollowedIdAndFollowerId(userId, user);
+		if (follow.isPresent())
+			return true;
+		return false;
+	}
 
 	@Transactional
 	private SportEntity getOrCreateSport(String name) {
@@ -156,7 +174,11 @@ public class BetService {
 		placed.setMultiplyer(winBet.getCurrentMultiplier());
 		placed.setBet(winBet);
 
-		userWinBetRepository.save(placed);
+		try {
+			userWinBetRepository.save(placed);
+		} catch (DataIntegrityViolationException e) {
+			throw new BadRequestException("unable to find bet");
+		}
 	}
 
 	public void saveWinBet(WinBetDto winBet) {
@@ -199,6 +221,7 @@ public class BetService {
 
 	public void placeScoreBet(ScoreBetPlaceDto bet, Long userId) {
 
+		System.out.println("score bet");
 		if (bet.getTeam1Score() < 0 || bet.getTeam2Score() < 0)
 			throw new BadRequestException("unable to place bet with negative score");
 
@@ -270,6 +293,7 @@ public class BetService {
 
 	/*--Prediction-Bet--*/
 
+	@Transactional
 	public void placePredictionBet(PredictionBetPlaceDto bet, Long userId) {
 
 		Optional<PredictionBetEntity> entity = predictionBetRepository.findById(bet.getId());
@@ -309,14 +333,22 @@ public class BetService {
 		placed.setPredicted(bet.getPrediction());
 		placed.setPrediction(predictionBet);
 
-		if (bet.getPrediction())
+		if (bet.getPrediction()) {
 			predictionBet.setTrueBets(predictionBet.getTrueBets() + 1);
-		else
+			predictionBet.setTrueBetsAmount(predictionBet.getTrueBetsAmount() + bet.getAmount());
+		} else {
 			predictionBet.setFalseBets(predictionBet.getFalseBets() + 1);
+			predictionBet.setFalseBetsAmount(predictionBet.getFalseBetsAmount() + bet.getAmount());
+		}
 
 		userRepository.save(userEntity);
 		predictionBetRepository.save(predictionBet);
-		userPredictionBetRepository.save(placed);
+
+		try {
+			userPredictionBetRepository.save(placed);
+		} catch (DataIntegrityViolationException e) {
+			throw new BadRequestException("unable to find bet");
+		}
 	}
 
 	public void savePredictionBet(PredictionBetDto predictionBet) {
@@ -332,5 +364,168 @@ public class BetService {
 		PagePropertiesValidator.validate(pageNumber, pageSize);
 		return predictionBetRepository.findByStopDateAfter(LocalDateTime.now(), PageRequest.of(pageNumber, pageSize))
 				.map(PredictionBetDto::fromEntity);
+	}
+
+	public Page<UserBetPredictionDto> getUserPredictionsAll(Long userId, Long user, int pageNumber, int pageSize) {
+		PagePropertiesValidator.validate(pageNumber, pageSize);
+		if (user == null || user == userId)
+			return userPredictionBetRepository.findAllByUserIdOrderByIdDesc(userId, PageRequest.of(pageNumber, pageSize))
+					.map(UserBetPredictionDto::fromEntity);
+		if (!isPublic(userId, user))
+			throw new BadRequestException("this account is private");
+		return userPredictionBetRepository.findAllByUserIdOrderByIdDesc(user, PageRequest.of(pageNumber, pageSize))
+				.map(UserBetPredictionDto::fromEntity);
+	}
+
+	public Page<UserBetPredictionDto> getUserPredictionsEnded(Long userId, Long user, int pageNumber, int pageSize) {
+		PagePropertiesValidator.validate(pageNumber, pageSize);
+		if (user == null || user == userId)
+			return userPredictionBetRepository
+					.findAllByUserIdAndPredictionEndedWithIsNotNullOrderByIdDesc(userId,
+							PageRequest.of(pageNumber, pageSize))
+					.map(UserBetPredictionDto::fromEntity);
+		if (!isPublic(userId, user))
+			throw new BadRequestException("this account is private");
+		return userPredictionBetRepository
+				.findAllByUserIdAndPredictionEndedWithIsNotNullOrderByIdDesc(user,
+						PageRequest.of(pageNumber, pageSize))
+				.map(UserBetPredictionDto::fromEntity);
+	}
+
+	public Page<UserBetPredictionDto> getUserPredictionsNotEnded(Long userId, Long user, int pageNumber, int pageSize) {
+		PagePropertiesValidator.validate(pageNumber, pageSize);
+		if (user == null || user == userId)
+			return userPredictionBetRepository
+					.findAllByUserIdAndPredictionEndedWithIsNullOrderByIdDesc(userId,
+							PageRequest.of(pageNumber, pageSize))
+					.map(UserBetPredictionDto::fromEntity);
+		if (!isPublic(userId, user))
+			throw new BadRequestException("this account is private");
+		return userPredictionBetRepository
+				.findAllByUserIdAndPredictionEndedWithIsNullOrderByIdDesc(user,
+						PageRequest.of(pageNumber, pageSize))
+				.map(UserBetPredictionDto::fromEntity);
+	}
+
+	public Page<UserScoreBetDto> getUserScore(Long userId, Long user, Boolean ended, String sport, int pageNumber,
+			int pageSize) {
+		PagePropertiesValidator.validate(pageNumber, pageSize);
+		LocalDateTime date = LocalDateTime.now();
+		PageRequest pageable = PageRequest.of(pageNumber, pageSize);
+		if (user == null || user == userId) {
+			if (ended == null) {
+				if (sport == null) {
+					return userScoreBetRepository.findAllByUserId(userId, pageable)
+							.map(UserScoreBetDto::fromEntity);
+				} else
+					return userScoreBetRepository.findAllByUserIdAndBetGameSportNameOrderByIdDesc(userId, sport, pageable)
+							.map(UserScoreBetDto::fromEntity);
+			}
+			if (sport == null) {
+				if (ended == true)
+					return userScoreBetRepository.findAllByUserIdAndBetStopDateBeforeOrderByIdDesc(userId, date, pageable)
+							.map(UserScoreBetDto::fromEntity);
+				else
+					return userScoreBetRepository.findAllByUserIdAndBetStopDateAfterOrderByIdDesc(userId, date, pageable)
+							.map(UserScoreBetDto::fromEntity);
+			} else {
+				if (ended == true)
+					return userScoreBetRepository
+							.findAllByUserIdAndBetGameSportNameAndBetStopDateBeforeOrderByIdDesc(userId, sport, date, pageable)
+							.map(UserScoreBetDto::fromEntity);
+				else
+					return userScoreBetRepository
+							.findAllByUserIdAndBetGameSportNameAndBetStopDateAfterOrderByIdDesc(userId, sport, date, pageable)
+							.map(UserScoreBetDto::fromEntity);
+			}
+		}
+		if (!isPublic(userId, user))
+			throw new BadRequestException("this account is private");
+		if (ended == null) {
+			if (sport == null)
+				return userScoreBetRepository.findAllByUserId(user, pageable)
+						.map(UserScoreBetDto::fromEntity);
+			else
+				return userScoreBetRepository.findAllByUserIdAndBetGameSportNameOrderByIdDesc(user, sport, pageable)
+						.map(UserScoreBetDto::fromEntity);
+		}
+		if (sport == null) {
+			if (ended == true)
+				return userScoreBetRepository.findAllByUserIdAndBetStopDateBeforeOrderByIdDesc(user, date, pageable)
+						.map(UserScoreBetDto::fromEntity);
+			else
+				return userScoreBetRepository.findAllByUserIdAndBetStopDateAfterOrderByIdDesc(user, date, pageable)
+						.map(UserScoreBetDto::fromEntity);
+		} else {
+			if (ended == true)
+				return userScoreBetRepository
+						.findAllByUserIdAndBetGameSportNameAndBetStopDateBeforeOrderByIdDesc(user, sport, date, pageable)
+						.map(UserScoreBetDto::fromEntity);
+			else
+				return userScoreBetRepository
+						.findAllByUserIdAndBetGameSportNameAndBetStopDateAfterOrderByIdDesc(user, sport, date, pageable)
+						.map(UserScoreBetDto::fromEntity);
+		}
+	}
+
+	public Page<UserWinBetDto> getUserWin(Long userId, Long user, Boolean ended, String sport, int pageNumber,
+			int pageSize) {
+		PagePropertiesValidator.validate(pageNumber, pageSize);
+		LocalDateTime date = LocalDateTime.now();
+		PageRequest pageable = PageRequest.of(pageNumber, pageSize);
+		if (user == null || user == userId) {
+			if (ended == null) {
+				if (sport == null) {
+					return userWinBetRepository.findAllByUserId(userId, pageable)
+							.map(UserWinBetDto::fromEntity);
+				} else
+					return userWinBetRepository.findAllByUserIdAndBetGameSportNameOrderByIdDesc(userId, sport, pageable)
+							.map(UserWinBetDto::fromEntity);
+			}
+			if (sport == null) {
+				if (ended == true)
+					return userWinBetRepository.findAllByUserIdAndBetStopDateBeforeOrderByIdDesc(userId, date, pageable)
+							.map(UserWinBetDto::fromEntity);
+				else
+					return userWinBetRepository.findAllByUserIdAndBetStopDateAfterOrderByIdDesc(userId, date, pageable)
+							.map(UserWinBetDto::fromEntity);
+			} else {
+				if (ended == true)
+					return userWinBetRepository
+							.findAllByUserIdAndBetGameSportNameAndBetStopDateBeforeOrderByIdDesc(userId, sport, date, pageable)
+							.map(UserWinBetDto::fromEntity);
+				else
+					return userWinBetRepository
+							.findAllByUserIdAndBetGameSportNameAndBetStopDateAfterOrderByIdDesc(userId, sport, date, pageable)
+							.map(UserWinBetDto::fromEntity);
+			}
+		}
+		if (!isPublic(userId, user))
+			throw new BadRequestException("this account is private");
+		if (ended == null) {
+			if (sport == null)
+				return userWinBetRepository.findAllByUserId(user, pageable)
+						.map(UserWinBetDto::fromEntity);
+			else
+				return userWinBetRepository.findAllByUserIdAndBetGameSportNameOrderByIdDesc(user, sport, pageable)
+						.map(UserWinBetDto::fromEntity);
+		}
+		if (sport == null) {
+			if (ended == true)
+				return userWinBetRepository.findAllByUserIdAndBetStopDateBeforeOrderByIdDesc(user, date, pageable)
+						.map(UserWinBetDto::fromEntity);
+			else
+				return userWinBetRepository.findAllByUserIdAndBetStopDateAfterOrderByIdDesc(user, date, pageable)
+						.map(UserWinBetDto::fromEntity);
+		} else {
+			if (ended == true)
+				return userWinBetRepository
+						.findAllByUserIdAndBetGameSportNameAndBetStopDateBeforeOrderByIdDesc(user, sport, date, pageable)
+						.map(UserWinBetDto::fromEntity);
+			else
+				return userWinBetRepository
+						.findAllByUserIdAndBetGameSportNameAndBetStopDateAfterOrderByIdDesc(user, sport, date, pageable)
+						.map(UserWinBetDto::fromEntity);
+		}
 	}
 }

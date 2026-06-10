@@ -14,6 +14,9 @@ import com.pewniaczekbet.dto.PredictionBetDto;
 import com.pewniaczekbet.dto.PredictionBetPlaceDto;
 import com.pewniaczekbet.dto.ScoreBetDto;
 import com.pewniaczekbet.dto.ScoreBetPlaceDto;
+import com.pewniaczekbet.dto.UserBetPredictionDto;
+import com.pewniaczekbet.dto.UserScoreBetDto;
+import com.pewniaczekbet.dto.UserWinBetDto;
 import com.pewniaczekbet.dto.WinBetDto;
 import com.pewniaczekbet.dto.WinBetPlaceDto;
 import com.pewniaczekbet.services.BetService;
@@ -112,5 +115,41 @@ public class BetControler {
 		UserControler.isAdmin(session);
 		betService.savePredictionBet(bet);
 		return ResponseEntity.ok("OK");
+	}
+
+	@GetMapping("/prediction/history")
+	ResponseEntity<Page<UserBetPredictionDto>> predictionBetHistory(HttpSession session,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "5") int pageSize,
+			@RequestParam(required = false) Long user,
+			@RequestParam(required = false) Boolean findEnded) {
+		Long userId = UserControler.getUserId(session);
+		if (findEnded == null)
+			return ResponseEntity.ok(betService.getUserPredictionsAll(userId, user, page, pageSize));
+		if (findEnded)
+			return ResponseEntity.ok(betService.getUserPredictionsEnded(userId, user, page, pageSize));
+		return ResponseEntity.ok(betService.getUserPredictionsNotEnded(userId, user, page, pageSize));
+	}
+
+	@GetMapping("/score/history")
+	ResponseEntity<Page<UserScoreBetDto>> scoreBetHistory(HttpSession session,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "5") int pageSize,
+			@RequestParam(required = false) Long user,
+			@RequestParam(required = false) String sport,
+			@RequestParam(required = false) Boolean findEnded) {
+		Long userId = UserControler.getUserId(session);
+		return ResponseEntity.ok(betService.getUserScore(userId, user, findEnded, sport, page, pageSize));
+	}
+
+	@GetMapping("/win/history")
+	ResponseEntity<Page<UserWinBetDto>> winBetHistory(HttpSession session,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "5") int pageSize,
+			@RequestParam(required = false) Long user,
+			@RequestParam(required = false) String sport,
+			@RequestParam(required = false) Boolean findEnded) {
+		Long userId = UserControler.getUserId(session);
+		return ResponseEntity.ok(betService.getUserWin(userId, user, findEnded, sport, page, pageSize));
 	}
 }

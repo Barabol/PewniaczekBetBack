@@ -26,10 +26,30 @@ public class PredictionBetEntity {
 	private Long trueBets;
 	@Column(name = "false_bets")
 	private Long falseBets;
+	@Column(name = "true_bets_amount")
+	private Long trueBetsAmount;
+	@Column(name = "false_bets_amount")
+	private Long falseBetsAmount;
 	@Column(name = "pot")
 	private Long pot;
 	@Column(name = "ended_with")
 	private Boolean endedWith;
+
+	public Long getTrueBetsAmount() {
+		return trueBetsAmount;
+	}
+
+	public void setTrueBetsAmount(Long trueBetsAmount) {
+		this.trueBetsAmount = trueBetsAmount;
+	}
+
+	public Long getFalseBetsAmount() {
+		return falseBetsAmount;
+	}
+
+	public void setFalseBetsAmount(Long falseBetsAmount) {
+		this.falseBetsAmount = falseBetsAmount;
+	}
 
 	public Long getId() {
 		return id;

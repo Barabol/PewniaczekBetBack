@@ -4,11 +4,14 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 
 import com.pewniaczekbet.dto.OathDto;
+import com.pewniaczekbet.dto.UserDto;
 import com.pewniaczekbet.model.dao.OathRepository;
 import com.pewniaczekbet.model.dao.OathServiceRepository;
 import com.pewniaczekbet.model.dao.UserRepository;
@@ -57,6 +60,12 @@ public class OathServie {
 				+ "&response_type=code&scope=" + scope;
 	}
 
+	public String getRedirectGithubLogin() {
+		return "https://github.com/login/oauth/authorize?" +
+				"client_id=" + clientId + "&redirect_uri=" + redirectUri + "github/callback/login"
+				+ "&response_type=code&scope=" + scope;
+	}
+
 	@Transactional
 	public void getCallbackGithub(String code, Long userId) {
 
@@ -86,17 +95,24 @@ public class OathServie {
 		if (!service.isPresent())// NOTE: service should exist
 			throw new InternalServerErrorException("unable to find service");
 
-		client = RestClient.create();
-		ResponseEntity<GetGithubInfo> res = client.get().uri("https://api.github.com/user")
-				.header("Authorization", "Bearer " + entity.getAccess_token())
-				.header("Accept", "application/vnd.github+json")
-				.retrieve().toEntity(GetGithubInfo.class);
-		if (res.getStatusCode().value() != 200)
+		ResponseEntity<GetGithubInfo> res;
+		try {
+			res = client.get().uri("https://api.github.com/user")
+					.header("Authorization", "Bearer " + entity.getAccess_token())
+					.header("Accept", "application/vnd.github+json")
+					.retrieve().toEntity(GetGithubInfo.class);
+			if (res.getStatusCode().value() != 200)
+				throw new BadRequestException("bad github token");
+		} catch (HttpClientErrorException e) {
+			throw new BadRequestException("bad github token");
+		}
+		if (!res.hasBody())
 			throw new BadRequestException("bad github token");
 
 		GetGithubInfo info = res.getBody();
 
 		OathEntity oath = new OathEntity();
+		oath.setServiceId(info.getId());
 		oath.setUser(user.get());
 		oath.setService(service.get());
 		oath.setToken(entity.getAccess_token());
@@ -104,7 +120,57 @@ public class OathServie {
 		oath.setEmail(info.getEmail());
 		oath.setAvatarUrl(info.getAvatar_url());
 		oath.setUrl(info.getUrl());
-		oathRepository.save(oath);
+		try {
+			oathRepository.save(oath);
+		} catch (DataIntegrityViolationException e) {
+			throw new BadRequestException("github account already is in use");
+		}
+	}
+
+	public UserDto getCallbackGithubLogin(String code) {
+
+		GetTokenRequest request = new GetTokenRequest();
+		request.setCode(code);
+		request.setClient_id(clientId);
+		request.setRedirect_uri(redirectUri + "github/callback");
+		request.setClient_secret(clientSecret);
+
+		RestClient client = RestClient.create();
+		ResponseEntity<GithubTokenEntity> es = client.post().uri("https://github.com/login/oauth/access_token")
+				.header("Accept", "application/json")
+				.body(request).retrieve().toEntity(GithubTokenEntity.class);
+
+		if (es.getStatusCode().value() != 200)
+			throw new InternalServerErrorException("unable to communicate to github api");
+
+		GithubTokenEntity entity = es.getBody();
+		if (entity.error != null)
+			throw new BadRequestException(entity.error_description);
+
+		Optional<OathServiceEntity> service = oathServiceRepository.findByName("github");
+		if (!service.isPresent())// NOTE: service should exist
+			throw new InternalServerErrorException("unable to find service");
+
+		client = RestClient.create();
+		ResponseEntity<GetGithubInfo> res;
+		try {
+			res = client.get().uri("https://api.github.com/user")
+					.header("Authorization", "Bearer " + entity.getAccess_token())
+					.header("Accept", "application/vnd.github+json")
+					.retrieve().toEntity(GetGithubInfo.class);
+			if (res.getStatusCode().value() != 200)
+				throw new BadRequestException("bad github token");
+		} catch (HttpClientErrorException e) {
+			throw new BadRequestException("bad github token");
+		}
+		if (!res.hasBody())
+			throw new BadRequestException("bad github token");
+
+		GetGithubInfo info = res.getBody();
+		OathEntity oath = oathRepository.findByServiceId(info.getId())
+				.orElseThrow(() -> new BadRequestException("not connected github account"));
+
+		return UserDto.fromEntity(oath.getUser());
 	}
 
 	public void deleteGithub(Long userId) {
@@ -119,6 +185,15 @@ public class OathServie {
 		private String url;
 		private String avatar_url;
 		private String email;
+		private Long id;
+
+		public Long getId() {
+			return id;
+		}
+
+		public void setId(Long id) {
+			this.id = id;
+		}
 
 		public String getLogin() {
 			return login;

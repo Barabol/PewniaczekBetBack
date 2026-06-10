@@ -36,6 +36,17 @@ public class OathEntity {
 	@Column(name = "url")
 	private String url;
 
+	@Column(name = "service_user_id")
+	private Long serviceId;
+
+	public Long getServiceId() {
+		return serviceId;
+	}
+
+	public void setServiceId(Long serviceId) {
+		this.serviceId = serviceId;
+	}
+
 	public String getLogin() {
 		return login;
 	}

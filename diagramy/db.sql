@@ -102,6 +102,8 @@ CREATE TABLE predictions(
 	stop_date TIMESTAMP,
 	true_bets INTEGER,
 	false_bets INTEGER,
+	true_bets_amount INTEGER,
+	false_bets_amount INTEGER,
 	pot INTEGER,
 	ended_with BOOLEAN
 );
@@ -118,7 +120,7 @@ CREATE TABLE user_win_bets(
 CREATE TABLE user_score_bets(
 	id SERIAL PRIMARY KEY,
 	user_id Integer REFERENCES users(id),
-	bet_id Integer REFERENCES win_bets(id),
+	bet_id Integer REFERENCES score_bets(id),
 	team1_score INTEGER,
 	team2_score INTEGER,
 	multiplyer FLOAT,
@@ -166,7 +168,8 @@ CREATE TABLE oath(
 	login varchar(128),
 	url varchar(256),
 	avatar_url varchar(256),
-	email varchar(256)
+	email varchar(256),
+	service_user_id Integer UNIQUE -- id użutkownika w serwisie github itd
 );
 
 CREATE TABLE payment_status(
@@ -262,9 +265,9 @@ ON CONFLICT (id) DO NOTHING;
 
 -- <> WARTOŚCI PREDICTIONS <> --
 
-INSERT INTO predictions (id,name,start_date,stop_date,true_bets,false_bets,pot,ended_with) VALUES 
-(1,'czy trump podbije iran?','2026-04-16 15:15:30', '2027-04-16 15:15:30',0,0,0,null),
-(2,'czy trump podbije grenlandie?','2026-01-16 15:15:30', '2025-03-16 15:15:30',0,0,0,true)
+INSERT INTO predictions (id,name,start_date,stop_date,true_bets,false_bets,pot,ended_with,true_bets_amount,false_bets_amount) VALUES 
+(1,'czy trump podbije iran?','2026-04-16 15:15:30', '2027-04-16 15:15:30',0,0,0,null,0,0),
+(2,'czy trump podbije grenlandie?','2026-01-16 15:15:30', '2025-03-16 15:15:30',0,0,0,true,0,0)
 ON CONFLICT (id) DO NOTHING;
 
 -- <> WARTOŚCI PREDICTIONS <> --

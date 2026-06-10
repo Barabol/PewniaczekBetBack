@@ -16,4 +16,6 @@ public interface OathRepository extends JpaRepository<OathEntity, Long> {
 	Optional<OathEntity> findByToken(String token);
 
 	void deleteByUserIdAndServiceName(Long userId, String serviceName);
+
+	Optional<OathEntity> findByServiceId(Long serviceId);
 }
