@@ -12,7 +12,7 @@ import com.pewniaczekbet.model.entities.PaymentEntity;
 public interface PaymentRepository extends JpaRepository<PaymentEntity, Long> {
 	Optional<PaymentEntity> findBySid(String sid);
 
-	Page<PaymentEntity> findByUserId(String sid, Pageable pageable);
+	Page<PaymentEntity> findByUserId(Long id, Pageable pageable);
 
 	List<PaymentEntity> findByStatusName(String name);
 }

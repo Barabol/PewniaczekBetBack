@@ -2,6 +2,7 @@ package com.pewniaczekbet.rest;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +13,6 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import com.pewniaczekbet.dto.OathDto;
 import com.pewniaczekbet.dto.RedirectUserDto;
-import com.pewniaczekbet.dto.UserDto;
 import com.pewniaczekbet.services.OathServie;
 
 import jakarta.servlet.http.HttpSession;
@@ -35,8 +35,9 @@ public class OathControler {
 	}
 
 	@GetMapping("github/login")
-	public RedirectView initiateOathGithubLogin() {
-		return new RedirectView(oathServie.getRedirectGithubLogin());
+	public RedirectView initiateOathGithubLogin(HttpSession session) {
+		session.setAttribute("sessionId", session.getId());
+		return new RedirectView(oathServie.getRedirectGithubLogin(session.getId()));
 	}
 
 	@GetMapping("github/callback")
@@ -49,7 +50,6 @@ public class OathControler {
 	@GetMapping("github/callback/login")
 	public RedirectView callbackOathGithubLogin(@RequestParam(required = true) String code,
 			HttpSession session) {
-		System.out.println(code);
 		RedirectUserDto redirect = oathServie.getCallbackGithubLogin(code);
 		session.setAttribute("id", redirect.getUser().getId());
 		session.setAttribute("type", redirect.getUser().getAccountTypeId());

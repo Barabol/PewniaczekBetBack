@@ -6,8 +6,10 @@ import java.util.Optional;
 import com.pewniaczekbet.dto.FollowDto;
 import com.pewniaczekbet.dto.LoginUserDto;
 import com.pewniaczekbet.dto.NewUserDto;
+import com.pewniaczekbet.dto.PaymentDto;
 import com.pewniaczekbet.dto.UserDto;
 import com.pewniaczekbet.model.dao.FollowerRepository;
+import com.pewniaczekbet.model.dao.PaymentRepository;
 import com.pewniaczekbet.model.dao.UserRepository;
 import com.pewniaczekbet.model.entities.FollowEntity;
 import com.pewniaczekbet.model.entities.UserEntity;
@@ -35,6 +37,7 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 	private final UserRepository userRepository;
 	private final FollowerRepository followRepository;
+	private final PaymentRepository paymentRepository;
 
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -159,5 +162,10 @@ public class UserService {
 			dto.setLosses(0L);
 		}
 		return dto;
+	}
+
+	public Page<PaymentDto> getUserPayments(Long userId, int page, int pageSize) {
+		PagePropertiesValidator.validate(page, pageSize);
+		return paymentRepository.findByUserId(userId, PageRequest.of(page, pageSize)).map(PaymentDto::fromEntity);
 	}
 }

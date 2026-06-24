@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.pewniaczekbet.dto.LoginUserDto;
 import com.pewniaczekbet.dto.NewUserDto;
+import com.pewniaczekbet.dto.PaymentDto;
 import com.pewniaczekbet.dto.UserDto;
 import com.pewniaczekbet.model.exceptions.BadPermissionException;
 import com.pewniaczekbet.model.exceptions.NotLoggedInException;
@@ -138,5 +139,12 @@ public class UserControler {
 			return ResponseEntity.status(HttpStatus.OK).body(false);
 		}
 		return ResponseEntity.status(HttpStatus.OK).body(true);
+	}
+
+	@GetMapping("/payments")
+	public ResponseEntity<Page<PaymentDto>> getPayments(HttpSession session, @RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "5") int pageSize) {
+		Long userId = UserControler.getUserId(session);
+		return ResponseEntity.status(HttpStatus.OK).body(userService.getUserPayments(userId, page, pageSize));
 	}
 }

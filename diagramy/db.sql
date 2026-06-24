@@ -172,6 +172,11 @@ CREATE TABLE oath(
 	service_user_id Integer UNIQUE -- id użutkownika w serwisie github itd
 );
 
+create table oauth_logins(
+	id UUID,
+	user_id Integer REFERENCES users(id)
+);
+
 CREATE TABLE payment_status(
 	id SERIAL PRIMARY KEY,
 	name varchar(64) UNIQUE

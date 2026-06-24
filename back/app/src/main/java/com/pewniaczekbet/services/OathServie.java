@@ -14,10 +14,12 @@ import org.springframework.web.servlet.view.RedirectView;
 import com.pewniaczekbet.dto.OathDto;
 import com.pewniaczekbet.dto.RedirectUserDto;
 import com.pewniaczekbet.dto.UserDto;
+import com.pewniaczekbet.model.dao.OathLoginsRepository;
 import com.pewniaczekbet.model.dao.OathRepository;
 import com.pewniaczekbet.model.dao.OathServiceRepository;
 import com.pewniaczekbet.model.dao.UserRepository;
 import com.pewniaczekbet.model.entities.OathEntity;
+import com.pewniaczekbet.model.entities.OathLoginsEntity;
 import com.pewniaczekbet.model.entities.OathServiceEntity;
 import com.pewniaczekbet.model.entities.UserEntity;
 import com.pewniaczekbet.model.exceptions.BadRequestException;
@@ -36,6 +38,7 @@ public class OathServie {
 	private final UserRepository userRepository;
 	private final OathRepository oathRepository;
 	private final OathServiceRepository oathServiceRepository;
+	private final OathLoginsRepository oathLoginsRepository;
 
 	@Value("${OATH_CLIENT_ID}")
 	private String clientId;
@@ -65,9 +68,10 @@ public class OathServie {
 				+ "&response_type=code&scope=" + scope;
 	}
 
-	public String getRedirectGithubLogin() {
+	public String getRedirectGithubLogin(String sessionId) {
+		OathLoginsEntity entity = new OathLoginsEntity();
 		return "https://github.com/login/oauth/authorize?" +
-				"client_id=" + clientId + "&redirect_uri=" + redirectUri + "github/callback/login"
+				"client_id=" + clientId + "&redirect_uri=" + redirectUri + "github/callback/login?code=" + sessionId
 				+ "&response_type=code&scope=" + scope;
 	}
 
