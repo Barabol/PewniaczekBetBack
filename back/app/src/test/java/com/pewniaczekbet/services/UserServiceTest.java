@@ -21,6 +21,7 @@ import com.pewniaczekbet.dto.LoginUserDto;
 import com.pewniaczekbet.dto.NewUserDto;
 import com.pewniaczekbet.dto.UserDto;
 import com.pewniaczekbet.model.dao.FollowerRepository;
+import com.pewniaczekbet.model.dao.PaymentRepository;
 import com.pewniaczekbet.model.dao.UserRepository;
 import com.pewniaczekbet.model.entities.FollowEntity;
 import com.pewniaczekbet.model.entities.UserEntity;
@@ -39,6 +40,8 @@ class UserServiceTest {
     private FollowerRepository followRepository;
     @Mock
     private EntityManager entityManager;
+    @Mock
+    private PaymentRepository paymentRepository;
 
     private UserService userService;
 
@@ -47,7 +50,7 @@ class UserServiceTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        userService = new UserService(userRepository, followRepository);
+        userService = new UserService(userRepository, followRepository,paymentRepository);
         Field field = UserService.class.getDeclaredField("entityManager");
         field.setAccessible(true);
         field.set(userService, entityManager);

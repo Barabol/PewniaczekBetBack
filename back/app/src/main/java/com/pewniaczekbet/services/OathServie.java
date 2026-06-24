@@ -38,7 +38,7 @@ public class OathServie {
 	private final UserRepository userRepository;
 	private final OathRepository oathRepository;
 	private final OathServiceRepository oathServiceRepository;
-	private final OathLoginsRepository oathLoginsRepository;
+	//private final OathLoginsRepository oathLoginsRepository;
 
 	@Value("${OATH_CLIENT_ID}")
 	private String clientId;
@@ -69,7 +69,6 @@ public class OathServie {
 	}
 
 	public String getRedirectGithubLogin(String sessionId) {
-		OathLoginsEntity entity = new OathLoginsEntity();
 		return "https://github.com/login/oauth/authorize?" +
 				"client_id=" + clientId + "&redirect_uri=" + redirectUri + "github/callback/login?code=" + sessionId
 				+ "&response_type=code&scope=" + scope;
