@@ -20,6 +20,7 @@ import com.pewniaczekbet.dto.WinBetDto;
 import com.pewniaczekbet.dto.WinBetPlaceDto;
 import com.pewniaczekbet.model.dao.FollowerRepository;
 import com.pewniaczekbet.model.dao.GameRepository;
+import com.pewniaczekbet.model.dao.LogRepository;
 import com.pewniaczekbet.model.dao.PredictionBetRepository;
 import com.pewniaczekbet.model.dao.ScoreBetRepository;
 import com.pewniaczekbet.model.dao.SportRepository;
@@ -31,6 +32,7 @@ import com.pewniaczekbet.model.dao.UserWinBetRepository;
 import com.pewniaczekbet.model.dao.WinBetRepository;
 import com.pewniaczekbet.model.entities.FollowEntity;
 import com.pewniaczekbet.model.entities.GameEntity;
+import com.pewniaczekbet.model.entities.LogEntity;
 import com.pewniaczekbet.model.entities.PredictionBetEntity;
 import com.pewniaczekbet.model.entities.ScoreBetEntity;
 import com.pewniaczekbet.model.entities.SportEntity;
@@ -66,6 +68,7 @@ public class BetService {
 	private final PredictionBetRepository predictionBetRepository;
 	private final UserPredictionBetRepository userPredictionBetRepository;
 	private final FollowerRepository followerRepository;
+	private final LogRepository logRepository;
 
 	private boolean isPublic(Long userId, Long user) {
 		UserEntity usr = userRepository.findById(user)
@@ -96,6 +99,17 @@ public class BetService {
 					entity.setName(name);
 					return teamRepository.save(entity);
 				});
+	}
+
+	private void createLog(Long userId, String content) {
+		Optional<UserEntity> user = userRepository.findById(userId);
+		if (!user.isPresent())
+			return;
+		LogEntity log = new LogEntity();
+		log.setUser(user.get());
+		log.setTime(LocalDateTime.now());
+		log.setValue(content);
+		logRepository.save(log);
 	}
 
 	@Transactional
@@ -181,7 +195,8 @@ public class BetService {
 		}
 	}
 
-	public void saveWinBet(WinBetDto winBet) {
+	public void saveWinBet(WinBetDto winBet, Long userId) {
+		createLog(userId, "creating win bet: " + winBet.getName());
 		WinBetEntity entity = winBetToEntity(winBet);
 		winBetRepository.save(entity);
 	}
@@ -217,6 +232,10 @@ public class BetService {
 		else
 			entity.setGame(gameRepository.save(gameToEntity(dto.getGame())));
 		return entity;
+	}
+
+	public void predictionSet(Long betId) {
+
 	}
 
 	public void placeScoreBet(ScoreBetPlaceDto bet, Long userId) {
@@ -269,7 +288,8 @@ public class BetService {
 		userScoreBetRepository.save(placed);
 	}
 
-	public void saveScoreBet(ScoreBetDto scoreBet) {
+	public void saveScoreBet(ScoreBetDto scoreBet, Long userId) {
+		createLog(userId, "creating score bet: " + scoreBet.getName());
 		ScoreBetEntity entity = scoreBetToEntity(scoreBet);
 		scoreBetRepository.save(entity);
 	}
@@ -351,7 +371,8 @@ public class BetService {
 		}
 	}
 
-	public void savePredictionBet(PredictionBetDto predictionBet) {
+	public void savePredictionBet(PredictionBetDto predictionBet, Long userId) {
+		createLog(userId, "creating prediction bet: " + predictionBet.getName());
 		predictionBetRepository.save(predictionBet.toEntity());
 	}
 

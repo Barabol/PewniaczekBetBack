@@ -129,4 +129,14 @@ public class UserControler {
 		Long followerId = UserControler.getUserId(session);
 		return ResponseEntity.status(HttpStatus.OK).body(userService.getDetails(followerId, userId));
 	}
+
+	@GetMapping("/auth")
+	public ResponseEntity<Boolean> isLoggedIn(HttpSession session) {
+		try {
+			UserControler.getUserId(session);
+		} catch (NotLoggedInException e) {
+			return ResponseEntity.status(HttpStatus.OK).body(false);
+		}
+		return ResponseEntity.status(HttpStatus.OK).body(true);
+	}
 }

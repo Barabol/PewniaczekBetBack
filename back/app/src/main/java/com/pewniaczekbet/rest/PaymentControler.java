@@ -1,6 +1,5 @@
 package com.pewniaczekbet.rest;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,9 +30,8 @@ public class PaymentControler {
 	}
 
 	@GetMapping("/redirect")
-	ResponseEntity<String> redirectPayment(@RequestParam(required = true) Long paymentId) {
-		paymentService.handleSuccess(paymentId);
-		return ResponseEntity.ok("ok");
+	RedirectView redirectPayment(@RequestParam(required = true) Long paymentId) {
+		return paymentService.handleSuccess(paymentId);
 	}
 
 	@GetMapping("/reload_all")

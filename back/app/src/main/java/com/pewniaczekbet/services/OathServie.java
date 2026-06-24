@@ -9,8 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.servlet.view.RedirectView;
 
 import com.pewniaczekbet.dto.OathDto;
+import com.pewniaczekbet.dto.RedirectUserDto;
 import com.pewniaczekbet.dto.UserDto;
 import com.pewniaczekbet.model.dao.OathRepository;
 import com.pewniaczekbet.model.dao.OathServiceRepository;
@@ -43,6 +45,9 @@ public class OathServie {
 
 	@Value("${OATH_REDIRECT}")
 	private String redirectUri;
+
+	@Value("${OATH_REDIRECT_FINAL}")
+	private String redirectFinal;
 
 	private String scope = "user:email,read:user";
 
@@ -127,7 +132,7 @@ public class OathServie {
 		}
 	}
 
-	public UserDto getCallbackGithubLogin(String code) {
+	public RedirectUserDto getCallbackGithubLogin(String code) {
 
 		GetTokenRequest request = new GetTokenRequest();
 		request.setCode(code);
@@ -170,7 +175,11 @@ public class OathServie {
 		OathEntity oath = oathRepository.findByServiceId(info.getId())
 				.orElseThrow(() -> new BadRequestException("not connected github account"));
 
-		return UserDto.fromEntity(oath.getUser());
+		RedirectUserDto redirect = new RedirectUserDto();
+		redirect.setUser(UserDto.fromEntity(oath.getUser()));
+		redirect.setRedirect(new RedirectView(redirectFinal));
+
+		return redirect;
 	}
 
 	public void deleteGithub(Long userId) {

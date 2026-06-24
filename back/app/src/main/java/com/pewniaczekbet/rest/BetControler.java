@@ -56,8 +56,8 @@ public class BetControler {
 
 	@PostMapping("/win/add")
 	ResponseEntity<String> addWinBet(HttpSession session, @RequestBody @Validated WinBetDto bet) {
-		UserControler.isAdmin(session);
-		betService.saveWinBet(bet);
+		Long userId = UserControler.isAdmin(session);
+		betService.saveWinBet(bet, userId);
 		return ResponseEntity.ok("OK");
 	}
 
@@ -84,8 +84,8 @@ public class BetControler {
 
 	@PostMapping("/score/add")
 	ResponseEntity<String> addScoreBet(HttpSession session, @RequestBody @Validated ScoreBetDto bet) {
-		UserControler.isAdmin(session);
-		betService.saveScoreBet(bet);
+		Long userId = UserControler.isAdmin(session);
+		betService.saveScoreBet(bet, userId);
 		return ResponseEntity.ok("OK");
 	}
 
@@ -112,8 +112,8 @@ public class BetControler {
 
 	@PostMapping("/prediction/add")
 	ResponseEntity<String> addPredictionBet(HttpSession session, @RequestBody @Validated PredictionBetDto bet) {
-		UserControler.isAdmin(session);
-		betService.savePredictionBet(bet);
+		Long userId = UserControler.isAdmin(session);
+		betService.savePredictionBet(bet, userId);
 		return ResponseEntity.ok("OK");
 	}
 
@@ -151,5 +151,11 @@ public class BetControler {
 			@RequestParam(required = false) Boolean findEnded) {
 		Long userId = UserControler.getUserId(session);
 		return ResponseEntity.ok(betService.getUserWin(userId, user, findEnded, sport, page, pageSize));
+	}
+
+	@PostMapping("/prediction/end")
+	ResponseEntity<String> predictionSet(HttpSession session, @RequestParam Long betId) {
+		Long userId = UserControler.isWorker(session);
+		return ResponseEntity.ok("ok");
 	}
 }

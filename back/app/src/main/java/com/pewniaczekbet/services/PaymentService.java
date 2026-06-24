@@ -47,6 +47,12 @@ public class PaymentService {
 	@Value("${STRIPE_REDIRECT_CANCEL}")
 	private String stripeRedirectCancel;
 
+	@Value("${STRIPE_REDIRECT_FINAL}")
+	private String stripeFinalRedirect;
+
+	@Value("${STRIPE_REDIRECT_FINAL_BAD}")
+	private String stripeFinalRedirectBad;
+
 	private String getPaymentStatus(String paymentId) {
 		try {
 			Session intent = Session.retrieve(paymentId);
@@ -70,11 +76,10 @@ public class PaymentService {
 	}
 
 	@Transactional
-	public void handleSuccess(Long paymentId) {
+	public RedirectView handleSuccess(Long paymentId) {
 		PaymentEntity entity = paymentRepository.findById(paymentId)
 				.orElseThrow(() -> new BadRequestException("unable to find payment"));
 		String payment = getPaymentStatus(entity.getSid());
-		//System.out.println("> ("+entity.getSid()+")" + entity.getStatus().getName() + "|" + payment);
 		if (!payment.equals(entity.getStatus().getName())) {
 			if (payment.equals("paid")) {
 				PaymentStatusEntity status = paymentStatusRepository.findByName(payment)
@@ -83,7 +88,7 @@ public class PaymentService {
 				entity.getUser().setBalance(entity.getUser().getBalance() + entity.getAmount());
 				userRepository.save(entity.getUser());
 				paymentRepository.save(entity);
-				return;
+				return new RedirectView(stripeFinalRedirect);
 			} else if (payment.equals("cancled")) {
 				PaymentStatusEntity status = paymentStatusRepository.findByName("cancled")
 						.orElseThrow(() -> new InternalServerErrorException("unable to find payment status"));
@@ -91,7 +96,7 @@ public class PaymentService {
 				paymentRepository.save(entity);
 			}
 		}
-		throw new BadRequestException("Dead transaction");
+		return new RedirectView(stripeFinalRedirectBad);
 	}
 
 	public RedirectView createPayment(Long amount, Long userId) {

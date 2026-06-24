@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.pewniaczekbet.dto.OathDto;
+import com.pewniaczekbet.dto.RedirectUserDto;
 import com.pewniaczekbet.dto.UserDto;
 import com.pewniaczekbet.services.OathServie;
 
@@ -46,12 +47,13 @@ public class OathControler {
 	}
 
 	@GetMapping("github/callback/login")
-	public ResponseEntity<UserDto> callbackOathGithubLogin(@RequestParam(required = true) String code,
+	public RedirectView callbackOathGithubLogin(@RequestParam(required = true) String code,
 			HttpSession session) {
-		UserDto user = oathServie.getCallbackGithubLogin(code);
-		session.setAttribute("id", user.getId());
-		session.setAttribute("type", user.getAccountTypeId());
-		return ResponseEntity.ok(user);
+		System.out.println(code);
+		RedirectUserDto redirect = oathServie.getCallbackGithubLogin(code);
+		session.setAttribute("id", redirect.getUser().getId());
+		session.setAttribute("type", redirect.getUser().getAccountTypeId());
+		return redirect.getRedirect();
 	}
 
 	@DeleteMapping("github")

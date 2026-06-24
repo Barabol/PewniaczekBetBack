@@ -187,6 +187,13 @@ CREATE TABLE payments(
 	status_id Integer REFERENCES payment_status(id)
 );
 
+CREATE TABLE logs(
+	id SERIAL PRIMARY KEY,
+	user_id Integer REFERENCES users(id),
+	time TIMESTAMP,
+	value varchar(1024)
+);
+
 -- <> WARTOŚCI PAYMENT STATUS <> --
 
 INSERT INTO payment_status(id,name) VALUES 
