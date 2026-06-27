@@ -17,6 +17,16 @@ public class WinBetEntity {
 	private Double currentMultiplier;
 	@Column(name = "stop_date")
 	private LocalDateTime stopDate;
+	@Column(name = "paid")
+	private boolean paid;
+
+	public boolean isPaid() {
+		return paid;
+	}
+
+	public void setPaid(boolean paid) {
+		this.paid = paid;
+	}
 
 	@ManyToOne
 	@JoinColumn(name = "game_id")

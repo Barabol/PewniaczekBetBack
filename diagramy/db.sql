@@ -84,7 +84,8 @@ CREATE TABLE win_bets(
 	name VARCHAR(80),
 	curent_multiplyer FLOAT,
 	stop_date TIMESTAMP,
-	game_id Integer REFERENCES games(id)
+	game_id Integer REFERENCES games(id),
+	paid BOOLEAN
 );
 
 CREATE TABLE score_bets(
@@ -92,7 +93,8 @@ CREATE TABLE score_bets(
 	name VARCHAR(80),
 	curent_multiplyer FLOAT,
 	stop_date TIMESTAMP,
-	game_id Integer REFERENCES games(id)
+	game_id Integer REFERENCES games(id),
+	paid BOOLEAN
 );
 
 CREATE TABLE predictions(
@@ -105,7 +107,8 @@ CREATE TABLE predictions(
 	true_bets_amount INTEGER,
 	false_bets_amount INTEGER,
 	pot INTEGER,
-	ended_with BOOLEAN
+	ended_with BOOLEAN,
+	paid BOOLEAN
 );
 
 CREATE TABLE user_win_bets(
@@ -174,7 +177,8 @@ CREATE TABLE oath(
 
 create table oauth_logins(
 	id UUID,
-	user_id Integer REFERENCES users(id)
+	used BOOLEAN,
+	oath_id Integer REFERENCES oath(id)
 );
 
 CREATE TABLE payment_status(
@@ -245,6 +249,7 @@ ON CONFLICT (id) DO NOTHING;
 -- <> WARTOŚCI TEAMS <> --
 
 INSERT INTO teams(id,name) VALUES 
+(0,'remis'),
 (1,'fc-barcelona'),
 (2,'real madryt'),
 (3,'korona kielce'),

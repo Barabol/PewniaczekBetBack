@@ -56,9 +56,11 @@ public class UserDto {
 		return dto;
 	}
 
+	/*
 	public static List<UserDto> fromEntity(List<UserEntity> entities) {
 		return entities.stream().map(UserDto::fromEntity).toList();
 	}
+	*/
 
 	public Long getId() {
 		return id;

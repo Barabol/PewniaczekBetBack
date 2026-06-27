@@ -34,6 +34,16 @@ public class PredictionBetEntity {
 	private Long pot;
 	@Column(name = "ended_with")
 	private Boolean endedWith;
+	@Column(name = "paid")
+	private Boolean paid;
+
+	public Boolean getPaid() {
+		return paid;
+	}
+
+	public void setPaid(Boolean paid) {
+		this.paid = paid;
+	}
 
 	public Long getTrueBetsAmount() {
 		return trueBetsAmount;

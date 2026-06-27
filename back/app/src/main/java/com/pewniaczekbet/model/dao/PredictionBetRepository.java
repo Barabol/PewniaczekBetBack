@@ -1,6 +1,7 @@
 package com.pewniaczekbet.model.dao;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,4 +13,6 @@ public interface PredictionBetRepository extends JpaRepository<PredictionBetEnti
 	Page<PredictionBetEntity> findAll(Pageable pageable);
 
 	Page<PredictionBetEntity> findByStopDateAfter(LocalDateTime date, Pageable pageable);
+
+	List<PredictionBetEntity> findByStopDateBeforeAndEndedWithNotNullAndPaidFalse(LocalDateTime date);
 }

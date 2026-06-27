@@ -1,5 +1,7 @@
 package com.pewniaczekbet.rest;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -10,10 +12,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.pewniaczekbet.dto.GameScoreChangeDto;
 import com.pewniaczekbet.dto.PredictionBetDto;
 import com.pewniaczekbet.dto.PredictionBetPlaceDto;
 import com.pewniaczekbet.dto.ScoreBetDto;
 import com.pewniaczekbet.dto.ScoreBetPlaceDto;
+import com.pewniaczekbet.dto.SportListDto;
 import com.pewniaczekbet.dto.UserBetPredictionDto;
 import com.pewniaczekbet.dto.UserScoreBetDto;
 import com.pewniaczekbet.dto.UserWinBetDto;
@@ -40,6 +44,11 @@ public class BetControler {
 		return betService.getWinAll(sport, page, pageSize);
 	}
 
+	@GetMapping("/win/sports")
+	List<SportListDto> getWinSports() {
+		return betService.getWinSports();
+	}
+
 	@GetMapping("/win/curent")
 	Page<WinBetDto> getWinCurent(@RequestParam(required = false) String sport,
 			@RequestParam(defaultValue = "0") int page,
@@ -54,18 +63,16 @@ public class BetControler {
 		return ResponseEntity.ok("OK");
 	}
 
-	@PostMapping("/win/add")
-	ResponseEntity<String> addWinBet(HttpSession session, @RequestBody @Validated WinBetDto bet) {
-		Long userId = UserControler.isAdmin(session);
-		betService.saveWinBet(bet, userId);
-		return ResponseEntity.ok("OK");
-	}
-
 	@GetMapping("/score/all")
 	Page<ScoreBetDto> getScoreAll(@RequestParam(required = false) String sport,
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "5") int pageSize) {
 		return betService.getScoreAll(sport, page, pageSize);
+	}
+
+	@GetMapping("/score/sports")
+	List<SportListDto> getScoreSports() {
+		return betService.getScoreSports();
 	}
 
 	@GetMapping("/score/curent")
@@ -79,13 +86,6 @@ public class BetControler {
 	ResponseEntity<String> placeScoreBet(HttpSession session, @RequestBody @Validated ScoreBetPlaceDto bet) {
 		Long userId = UserControler.getUserId(session);
 		betService.placeScoreBet(bet, userId);
-		return ResponseEntity.ok("OK");
-	}
-
-	@PostMapping("/score/add")
-	ResponseEntity<String> addScoreBet(HttpSession session, @RequestBody @Validated ScoreBetDto bet) {
-		Long userId = UserControler.isAdmin(session);
-		betService.saveScoreBet(bet, userId);
 		return ResponseEntity.ok("OK");
 	}
 
@@ -107,13 +107,6 @@ public class BetControler {
 	ResponseEntity<String> placePredictionBet(HttpSession session, @RequestBody @Validated PredictionBetPlaceDto bet) {
 		Long userId = UserControler.getUserId(session);
 		betService.placePredictionBet(bet, userId);
-		return ResponseEntity.ok("OK");
-	}
-
-	@PostMapping("/prediction/add")
-	ResponseEntity<String> addPredictionBet(HttpSession session, @RequestBody @Validated PredictionBetDto bet) {
-		Long userId = UserControler.isAdmin(session);
-		betService.savePredictionBet(bet, userId);
 		return ResponseEntity.ok("OK");
 	}
 
@@ -153,9 +146,4 @@ public class BetControler {
 		return ResponseEntity.ok(betService.getUserWin(userId, user, findEnded, sport, page, pageSize));
 	}
 
-	@PostMapping("/prediction/end")
-	ResponseEntity<String> predictionSet(HttpSession session, @RequestParam Long betId) {
-		Long userId = UserControler.isWorker(session);
-		return ResponseEntity.ok("ok");
-	}
 }

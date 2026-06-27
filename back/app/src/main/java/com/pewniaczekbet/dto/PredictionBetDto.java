@@ -42,12 +42,13 @@ public class PredictionBetDto {
 		entity.setCurrentMultiplier(this.getCurrentMultiplier());
 		entity.setStartDate(this.getStartDate());
 		entity.setStopDate(this.getStopDate());
-		entity.setTrueBets(this.getTrueBets());
-		entity.setFalseBets(this.getFalseBets());
-		entity.setTrueBetsAmount(entity.getTrueBetsAmount());
-		entity.setFalseBetsAmount(entity.getFalseBetsAmount());
-		entity.setPot(this.getPot());
-		entity.setEndedWith(this.getEndedWith());
+		entity.setTrueBets(0L);
+		entity.setFalseBets(0L);
+		entity.setTrueBetsAmount(0L);
+		entity.setFalseBetsAmount(0L);
+		entity.setPot(0L);
+		entity.setEndedWith(null);
+		entity.setPaid(false);
 		return entity;
 	}
 

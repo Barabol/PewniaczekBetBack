@@ -53,7 +53,7 @@ public class UserControler {
 		if (userId == null)
 			throw new NotLoggedInException();
 		Long permission = (Long) session.getAttribute("type");
-		if (permission != 2 || permission != 1)
+		if (permission == 0)
 			throw new BadPermissionException();
 		return userId;
 	}
@@ -64,9 +64,11 @@ public class UserControler {
 		this.userService = userService;
 	}
 
-	@GetMapping("/all") // TODO: remove
-	public ResponseEntity<List<UserDto>> getUsers() {
-		return ResponseEntity.ok(userService.getUsers());
+	@GetMapping("/all")
+	public ResponseEntity<Page<UserDto>> getUsers(HttpSession session, @RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "5") int pageSize) {
+		UserControler.getUserId(session);
+		return ResponseEntity.ok(userService.getUsers(page, pageSize));
 	}
 
 	@PostMapping("/register")

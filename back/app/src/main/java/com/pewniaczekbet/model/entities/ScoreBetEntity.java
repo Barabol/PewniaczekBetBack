@@ -22,6 +22,17 @@ public class ScoreBetEntity {
 	@JoinColumn(name = "game_id")
 	private GameEntity game;
 
+	@Column(name = "paid")
+	private boolean paid;
+
+	public boolean isPaid() {
+		return paid;
+	}
+
+	public void setPaid(boolean paid) {
+		this.paid = paid;
+	}
+
 	public Long getId() {
 		return id;
 	}

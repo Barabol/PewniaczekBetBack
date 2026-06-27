@@ -1,6 +1,7 @@
 package com.pewniaczekbet.model.dao;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,4 +28,6 @@ public interface UserScoreBetRepository extends JpaRepository<UserScoreBetEntity
 
 	Page<UserScoreBetEntity> findAllByUserIdAndBetGameSportNameAndBetStopDateBeforeOrderByIdDesc(Long userId,
 			String sport, LocalDateTime date, Pageable pageable);
+
+	List<UserScoreBetEntity> findAllByBetId(Long betId);
 }

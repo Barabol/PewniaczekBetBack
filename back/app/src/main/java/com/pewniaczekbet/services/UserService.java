@@ -44,9 +44,11 @@ public class UserService {
 
 	// TODO: add regex validation
 
-	public List<UserDto> getUsers() {
-		List<UserEntity> users = userRepository.findAll();
-		return UserDto.fromEntity(users);
+	public Page<UserDto> getUsers(int page, int pageSize) {
+		PagePropertiesValidator.validate(page, pageSize);
+		Page<UserDto> users = userRepository.findByIsPublicTrue(PageRequest.of(page, pageSize))
+				.map(UserDto::fromEntity);
+		return users;
 	}
 
 	public UserDto createUser(NewUserDto user) {
