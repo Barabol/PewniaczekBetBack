@@ -106,6 +106,7 @@ CREATE TABLE predictions(
 	false_bets INTEGER,
 	true_bets_amount INTEGER,
 	false_bets_amount INTEGER,
+	curent_multiplyer FLOAT,
 	pot INTEGER,
 	ended_with BOOLEAN,
 	paid BOOLEAN
